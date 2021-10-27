@@ -28,7 +28,7 @@ public class Flor {
 		this.petala2 = petala;
 	}
 	
-	public boolean temPetala2() {                 // acessor pra ver se tem petala 2
+	public boolean temPetala2() {                 /// acessor pra ver se tem petala 2
 		if(petala2 == null) {
 			return false;
 		}else {
