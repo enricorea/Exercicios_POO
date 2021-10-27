@@ -1,0 +1,39 @@
+package ProjetoStatic;
+
+public class ProjetoStatic {
+	
+	// a variável estática é criada uma só vez/ ela compartilha espaço de memória
+	// o método 
+	
+	public static void main(String[] args) {
+		Teste x = new Teste();
+		Teste.a = 1;
+		x.b = 1;
+		
+		Teste y = new Teste();
+		Teste.a = 2;
+		y.b = 3;
+		
+		Teste z = new Teste();
+		z.b = 6;
+		
+		System.out.println("Z.a:"+y.b);
+		
+		x.imprimirSemStatic(); //metodos estaticos dependem da instanciação
+		// quando tem coisas utilizadas dentro do programa que não dependem de variáveis externas
+		// entrada simples e saida simples -> estatico
+		
+		Teste.imprimirComStatic(); //metodos estados existem antes da instancioação
+		
+		System.out.println("tipo de salario:"+TiposDeSalario.calcularSalario(TiposDeSalario.SALARIOMINIMO));
+		
+		trabalhador t1 = new trabalhador();
+		t1.nome = "t1";
+		t1.start();
+		
+		trabalhador t2 = new trabalhador();
+		t2.nome = "t2";
+		t2.start(); //daemon
+	}
+
+}
