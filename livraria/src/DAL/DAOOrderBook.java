@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import BLL.order;
-import BLL.user;
 
-public class DAOOrder {
+import BLL.order;
+import BLL.orderBook;
+import BLL.book;
+
+public class DAOOrderBook {
 
 	
     private Connection conection = null;
@@ -32,15 +34,16 @@ public class DAOOrder {
     }
 
     //incluir
-    public void incluir(order order) throws SQLException {
+    public void incluir(orderBook orderBook) throws SQLException {
         conectar();
 
-        String query = "INSERT INTO library.order (user_id) "
-                + "VALUES (?)";    
+        String query = "INSERT INTO library.order_book (order_id, book_id) "
+                + "VALUES (?,?)";    
         PreparedStatement prep = conection.prepareStatement(
                 query,
                 Statement.RETURN_GENERATED_KEYS);
-        prep.setInt(1, order.getConsumidor().getId());    // aqui
+        prep.setInt(1, orderBook.getOrder().getId());    // aqui
+        prep.setInt(2, orderBook.getBook().getId());
         prep.execute();
         conection.commit();
 
@@ -48,15 +51,16 @@ public class DAOOrder {
     }
 
     //alterar - a model deve estar com o id preenchido
-    public void alterar(order order) throws SQLException {
+    public void alterar(orderBook orderBook) throws SQLException {
         conectar();
         try {
-            String query = "UPDATE library.order "
-                    + "SET user_id=? WHERE order_id=?";
+            String query = "UPDATE library.order_book "
+                    + "SET order_id=?, book_id=? WHERE order_book_id=?";
             PreparedStatement prep = conection.prepareStatement(query);
 
-            prep.setInt(2, order.getId());
-            prep.setInt(1, order.getConsumidor().getId());
+            prep.setInt(3, orderBook.getId());
+            prep.setInt(1, orderBook.getOrder().getId());
+            prep.setInt(2, orderBook.getBook().getId()); 
             prep.execute();
 
             conection.commit();
@@ -67,14 +71,14 @@ public class DAOOrder {
     }
 
     //excluir
-    public void excluir(order order) {
+    public void excluir(orderBook orderBook) {
         conectar();
         try {
-            String query = "DELETE FROM library.order "
-                    + "WHERE order_id=?";
+            String query = "DELETE FROM library.order_book "
+                    + "WHERE order_book_id=?";
             PreparedStatement prep = conection.prepareStatement(query);
 
-            prep.setInt(1, order.getId());
+            prep.setInt(1, orderBook.getId());
             prep.execute();
 
             conection.commit();
@@ -85,74 +89,63 @@ public class DAOOrder {
     }
 
     //consultar
-    public int consultarPorTitulo(order order) {
+    public int consultarPorID(orderBook orderBook) {
         conectar();
         int idTmp = -1;
-        String query = "SELECT * from library.order "
-                + "WHERE order_id = ?";
+        String query = "SELECT * from library.order_book "
+                + "WHERE order_book_id = ?";
         try {
             PreparedStatement prep = conection.prepareStatement(query);
-            prep.setInt(1, order.getId());
+            prep.setInt(1, orderBook.getId());
 
             ResultSet list = prep.executeQuery();
 
             while (list.next()) {
-                idTmp = list.getInt("order_id");
+                idTmp = list.getInt("order_book_id");
                 break;
             }
             conection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        order.setId(idTmp);
+        orderBook.setId(idTmp);
         return idTmp;
     }
     
-    public order retornarUltimo() {
-    	
-    	String query = "SELECT * FROM library.`order` WHERE order_id=(SELECT max(order_id) FROM library.`order`);"; // query que pega o ultimo order id da lista
-    	order order = new order();
-        conectar();
-        try {
-            PreparedStatement prep = conection.prepareStatement(query);
-            ResultSet lista = prep.executeQuery(); 
-            
-            while (lista.next()) {
-            	
-            	order.setId(lista.getInt("order_id"));
-                
-            }
-            conection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    	
-		return order;
-    }
 
-    public List<order> listar(String params) {
+    public List<orderBook> listar(String params) {
     	
-    	DAOUser daoUser = new DAOUser(); 
-    	
-    	List<user> listaUser = daoUser.listar(""); 
 
+    	DAOOrder daoOrder = new DAOOrder();
+    	DAOBook daoBook = new DAOBook();
+    	List<order> listaOrder = daoOrder.listar(""); 
+    	List<book> listaBook = daoBook.listar("");
+    	List<orderBook> listaOrderBook = new ArrayList<>();
+    	
         conectar();
-        List<order> listaOrder = new ArrayList<>();
-        String query = "SELECT * from library.order " + params;
+        String query = "SELECT * from library.order_book " + params;
 
         try {
             PreparedStatement prep = conection.prepareStatement(query);
             ResultSet lista = prep.executeQuery(); 
 
             while (lista.next()) {
-            	order order = new order();
-            	order.setId(lista.getInt("order_id"));
+            	orderBook orderBook = new orderBook();
+            	orderBook.setId(lista.getInt("orderBook_id"));
                 
-                
-                for (user user : listaUser) {
-                    if (user.getId() == lista.getInt("user_id")) { 
+                for (order order : listaOrder) {
+                    if (order.getId() == lista.getInt("order_id")) { //objeto da lista == author_id do banco de dados
                     	
-                    	order.setConsumidor(user);
+                    	orderBook.setOrder(order);
+                    	
+                    	break;
+                    }
+                }
+                
+                for (book book : listaBook) {
+                    if (book.getId() == lista.getInt("book_id")) { 
+                    	
+                    	orderBook.setBook(book);
                     	
                     	break;
                     }
@@ -163,8 +156,7 @@ public class DAOOrder {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return listaOrder;
+        return listaOrderBook;
     }
-
+	
 }
-

@@ -9,7 +9,6 @@ public class CRUDBolos {
 	
 	public void adicionarBolo(Bolo bolo) {
 		listaDeBolos.add(bolo); //metodo pra adicionar o bolo a lista
-		
 	}
 	
 	public Bolo buscarBolo(String nomeDoBolo) {
@@ -34,6 +33,17 @@ public class CRUDBolos {
 		Bolo b = buscarBolo(nomeDoBolo);
 		if(b != null) {
 			listaDeBolos.remove(b);
+			return true;
+		}
+		return false;
+	}
+	
+	//polimorfismo (tem 2 remover bolo) - no segundo remove pelo objeto
+	
+	public boolean removerBolo(Bolo bolo) {
+
+		if(bolo != null) {
+			listaDeBolos.remove(bolo);
 			return true;
 		}
 		return false;
@@ -67,10 +77,6 @@ public class CRUDBolos {
 		
 }
 
-
-
-
-//mudar CRUDBolos para PEDIDOBolos
 //colocar um metodo de remoção por objeto
 //da mesma forma que teve o atualizar, vai ter o remover utilizando (Bolo bolo)
 

@@ -1,13 +1,21 @@
 package BLL;
 
-import java.util.Scanner;
+//import java.util.Scanner;
 
 public class order {
 	
 	//atributos criados (na uml estão ligados ao order)
 	
-	private book livro;
+	private orderBook listaLivros;
 	
+	public orderBook getListaLivros() {
+		return listaLivros;
+	}
+
+	public void setListaLivros(orderBook listaLivros) {
+		this.listaLivros = listaLivros;
+	}
+
 	private user consumidor;
 	
 	private shippingInfo entregador;
@@ -22,14 +30,6 @@ public class order {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	public book getLivro() {
-		return livro;
-	}
-
-	public void setLivro(book livro) {
-		this.livro = livro;
 	}
 
 	public user getConsumidor() {
@@ -57,6 +57,7 @@ public class order {
 	}
 	
 	
+	/*	
 	public boolean isFulffiled() {
 		
 		return (livro != null && consumidor != null && entregador != null);
@@ -64,7 +65,8 @@ public class order {
 	}
 	
 	public boolean execVenda() {
-		
+
+
 		if (isFulffiled()) {
 			//classe // objeto criado a partir da classe
 			Scanner leitor = new Scanner(System.in);
@@ -79,11 +81,11 @@ public class order {
 				return true;
 			}			
 		}
+
 		
 		return false;
-		
+*/		
 		
 		
 	}
 	
-}

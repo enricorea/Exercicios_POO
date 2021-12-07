@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import BLL.book;
 import BLL.user;
 
 public class DAOUser {
@@ -70,14 +69,14 @@ public class DAOUser {
     }
 
     //excluir
-    public void excluir(user user) {
+    public void excluir(int id) {
         conectar();
         try {
             String query = "DELETE FROM library.user "
                     + "WHERE user_id=?";
             PreparedStatement prep = conection.prepareStatement(query);
 
-            prep.setInt(1, user.getId());
+            prep.setInt(1, id);
             prep.execute();
 
             conection.commit();

@@ -118,8 +118,8 @@ public class DAOAuthor {
 
             while (lista.next()) {
                 author author = new author();
-                author.setId(lista.getInt("id"));
-                author.setName(lista.getString("title"));
+                author.setId(lista.getInt("author_id"));
+                author.setName(lista.getString("nome_autor"));
                 listaAutores.add(author);
             }
             conection.close();

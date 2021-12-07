@@ -1,5 +1,6 @@
 package BLL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,12 +13,12 @@ public class livraria {
 		BaseDeDados baseDeDados  = new BaseDeDados();
 		baseDeDados.configuraBanco();
 	
-		Scanner scanner = new Scanner(System.in);
+
 		System.out.println("Selecione a opcao desejada: ");
-		
 		int numero = -1;
 		
 		while(numero != 0) {
+			Scanner scanner = new Scanner(System.in);
 			System.out.println("Digite 1 para cadastrar um novo usuario");
 			System.out.println("Digite 2 para listar os usuarios");
 			System.out.println("Digite 3 para deletar seu usuario");
@@ -46,13 +47,15 @@ public class livraria {
 					break;
 			
 			}
+			scanner.close();
 		}
+
 	}
 	
 	public static void criarUsuario() {
 		user usuario = new user();
 		Scanner scanner = new Scanner(System.in);
-		System.out.println("Digite seu nome: ");
+		System.out.print("Digite seu nome: ");
 		String nome = scanner.next();
 		scanner.close();
 		usuario.setNome(nome);
@@ -66,28 +69,85 @@ public class livraria {
 		}
 	}
 	
-	public static void listarUsuario() {
+	public static List<user> listarUsuario() {
 		DAOUser daoUser = new DAOUser();
 		List<user> listaUsuarios = daoUser.listar("");
 		System.out.println("listaUsuarios.size: " + listaUsuarios.size());
 		for(user user : listaUsuarios) {
 			System.out.println("ID = " + user.getId() + "  | Nome = " + user.getNome());
 		}
+		
+		return listaUsuarios;
 	}
 	
 	public static void deletarUsuario() {
 		DAOUser daoUser = new DAOUser();
 		Scanner scanner = new Scanner(System.in);
-		System.out.println("Informe o ID: ");
-		
+		System.out.print("Informe o ID: ");
+		daoUser.excluir(scanner.nextInt());
+		scanner.close();
 	}
 	
-	public static void consultarLivros() {
-		
+	public static List<book> consultarLivros() {
+		DAOBook daoBook = new DAOBook();
+		List<book> listaLivros = daoBook.listar("");
+		for(book book : listaLivros) {
+			System.out.println("ID = " + book.getId() + "  | Nome = " + book.getTitle() + " | Autor = "
+						               + book.getAuthor().getName() + " | Editora = " + book.getPublisher().getName());
+		}
+		return listaLivros;
 	}
 	
 	public static void comprarLivro() {
+		List<book> listaLivros = consultarLivros(); //disponibiliza a lista de livros p/ acessar 1x
+		List<book> livrosCompras = new ArrayList<>(); //criando uma lista de livros vazia p/ compra, para ir p/ order
+		DAOOrder daoOrder = new DAOOrder();
+		int id;
+		int doneSelecting = 9999;
+		order order = new order();
+		Scanner scanner = new Scanner(System.in);
+		while(doneSelecting != 100) {
+			System.out.print("Informe o ID do livro a ser comprado: ");
+			id = (scanner.nextInt());
+			for(int i = 0 ; i < listaLivros.size() ; i++ ) {
+				if(listaLivros.get(i).getId() == id ) {
+					livrosCompras.add(listaLivros.get(i)); //add na lista de livros p/ compra o objeto que corresponde com o ID informado
+				}
+			}
+			System.out.print("Digite 100 para parar ou qualquer outro numero para continuar: ");
+			doneSelecting = scanner.nextInt();
+		}
+	//	order.setListaLivros(livrosCompras);
 		
+		List<user> listaUsuario = listarUsuario();
+		
+		System.out.print("Informe o ID do comprador: ");
+		id = (scanner.nextInt());
+		scanner.close();
+		for(int i = 0 ; i < listaUsuario.size() ; i++ ) {
+			if(listaUsuario.get(i).getId() == id ) {
+				order.setConsumidor(listaUsuario.get(i));
+			}
+		}
+		try {
+			daoOrder.incluir(order);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//pegar id do order feito, sera colocado no order book pra fazer associação de 1 - n
+		for(book book : livrosCompras) {
+			DAOOrderBook daoOrderBook = new DAOOrderBook();
+			orderBook orderBook = new orderBook();
+			orderBook.setOrder(daoOrder.retornarUltimo()); //pegando o ultimo order feito, e colocando no objeto orderBook
+			orderBook.setBook(book);
+			try {
+				daoOrderBook.incluir(orderBook); //inclundo um registro na order_book p/ cada livro comprado com o metodo incluir.
+				System.out.println("Você concluiu sua venda! Caiu no golpe.");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+			
 	}
 }
 		
