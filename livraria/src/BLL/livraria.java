@@ -53,7 +53,7 @@ public class livraria {
 	}
 	
 	public static void criarUsuario() {
-		user usuario = new user();
+		user usuario = new user();  //instanciando
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Digite seu nome: ");
 		String nome = scanner.next();
@@ -142,7 +142,7 @@ public class livraria {
 			orderBook.setBook(book);
 			try {
 				daoOrderBook.incluir(orderBook); //inclundo um registro na order_book p/ cada livro comprado com o metodo incluir.
-				System.out.println("Você concluiu sua venda! Caiu no golpe.");
+				System.out.println("Você concluiu sua venda!");
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
